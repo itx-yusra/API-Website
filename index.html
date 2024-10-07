@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSONPlaceholder API Website</title>
+    <style>
+        body {
+            transition: background-color 0.5s ease-in-out;
+            font-family: Arial, sans-serif;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            /* background-color: #ffe3b0; */
+            background-image: url('https://c0.wallpaperflare.com/preview/846/493/250/simple-banner-website-background-paperclip.jpg'); /* Add your image URL here */
+            background-size: cover; /* Ensure the image covers the entire page */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* Prevent the image from repeating */
+            background-attachment: fixed; /* Fix the background image position */
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: center;
+            background-color: #1dad9b;
+        }
+        .navbar a {
+            color: #f8fe85;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+        }
+        .navbar a:hover {
+            background-color: #ff8260;
+            color: black;
+        }
+        .content {
+            padding: 20px;
+        }
+        .post, .todo, .photo {
+            border: 1px solid white;
+            margin: 10px 0;
+            padding: 10px;
+        }
+        img {
+            max-width: 100px;
+        }
+        .message-box {
+            border: 2px solid black; /* Blue border color */
+            border-radius: 10px; /* Rounded corners */
+            background-color: rgb(247, 209, 215); /* Light blue background */
+            color: #c51350; /* Dark text color */
+            padding: 20px;
+            text-align: center;
+            font-size: 18px;
+            margin: 20px auto;
+            max-width: 600px; /* Center align the box */
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="#posts" id="postsLink">Posts</a>
+        <a href="#todos" id="todosLink">Todos</a>
+        <a href="#photos" id="photosLink">Photos</a>
+    </div>
+    <div class="content" id="content">
+        <!-- This content will be dynamically updated by JavaScript -->
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+            // Function to fetch and display data
+            function fetchData(type) {
+                let url;
+                switch (type) {
+                    case 'posts':
+                        url = 'https://jsonplaceholder.typicode.com/posts?_limit=50';
+                        break;
+                    case 'todos':
+                        url = 'https://jsonplaceholder.typicode.com/todos?_limit=50';
+                        break;
+                    case 'photos':
+                        url = 'https://jsonplaceholder.typicode.com/photos?_limit=50';
+                        break;
+                    default:
+                        return;
+                }
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        displayData(data, type);
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            }
+
+            // Function to display data in the content area
+            function displayData(data, type) {
+                const contentDiv = document.getElementById('content');
+                contentDiv.innerHTML = ''; // Clear previous content
+
+                data.forEach(item => {
+                    let html;
+                    if (type === 'posts') {
+                        html = `
+                            <div class="post">
+                                <h2>${item.title}</h2>
+                                <p>${item.body}</p>
+                            </div>
+                        `;
+                    } else if (type === 'todos') {
+                        html = `
+                            <div class="todo">
+                                <h3>${item.title}</h3>
+                                <p>Status: ${item.completed ? 'Completed' : 'Pending'}</p>
+                            </div>
+                        `;
+                    } else if (type === 'photos') {
+                        html = `
+                            <div class="photo">
+                                <img src="${item.thumbnailUrl}" alt="${item.title}">
+                                <p>${item.title}</p>
+                            </div>
+                        `;
+                    }
+                    contentDiv.innerHTML += html;
+                });
+            }
+
+            // Function to handle hash change and load content accordingly
+            function handleHashChange() {
+                const hash = window.location.hash.substring(1); // Remove the # character
+                if (['posts', 'todos', 'photos'].includes(hash)) {
+                    fetchData(hash);
+                } else {
+                    document.getElementById('content').innerHTML = '<div class="message-box"> ✨ Select a category to view content.✨ </div>';
+                }
+            }
+            // Listen for hash changes and load content accordingly
+            window.addEventListener('hashchange', handleHashChange);
+
+            // Initial content load based on current hash or default
+            if (window.location.hash) {
+                handleHashChange();
+            } else {
+                document.getElementById('content').innerHTML = '<div class="message-box"> ✨ Select a category to view content.✨ </div>';
+            }
+        });
+    </script>
+</body>
+</html>
+    
+    </script>
+</body>
+</html>
